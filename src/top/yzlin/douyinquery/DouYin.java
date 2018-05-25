@@ -37,14 +37,7 @@ public class DouYin {
         userID=configLoading.getMemberUserID(memberName);
     }
 
-
-
-    public static void main(String[] args) {
-        DouYin douYin=new DouYin("蒋芸");
-        Tools.printArrays(douYin.getData(1522318665));
-    }
-
-    private DouYinInfo[] getData(long lastTime){
+    public DouYinInfo[] getData(long lastTime){
         String str=Tools.sendGet("https://www.douyin.com/aweme/v1/aweme/post/",
                 "user_id="+userID+"&count=21&max_cursor=0&aid=1128&_signature="+getSign(userID));
         List<JSONObject> jsonObjectList=JSONObject.fromObject(str).getJSONArray("aweme_list");
@@ -53,7 +46,7 @@ public class DouYin {
                     DouYinInfo douYinInfo=new DouYinInfo();
                     douYinInfo.setMemberName(memberName);
                     douYinInfo.setTitle(j.getString("desc"));
-                    douYinInfo.setCreateTime(j.getLong("create_time"));
+                    douYinInfo.setCreateTime(j.getLong("create_time")*1000);
                     j=j.getJSONObject("video");
                     douYinInfo.setCoverUrl(j.getJSONObject("cover").getJSONArray("url_list").getString(0));
                     douYinInfo.setVideoUrl(j.getJSONObject("play_addr").getJSONArray("url_list").getString(0));

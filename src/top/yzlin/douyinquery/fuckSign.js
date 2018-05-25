@@ -1,3 +1,4 @@
+//感谢ID为HKJ48-提莫队长应援会的聚聚提供的签名算法
 function generateSignature(userId) {
     this.navigator = {
         userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 11_0 like Mac OS X) AppleWebKit/604.1.38 (KHTML, like Gecko) Version/11.0 Mobile/15A372 Safari/604.1"

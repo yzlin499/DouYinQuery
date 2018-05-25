@@ -1,5 +1,5 @@
 package top.yzlin.douyinquery;
 
 public interface DouYinFunction {
-    boolean apply(DouYinInfo douYinInfo);
+    void apply(DouYinInfo douYinInfo);
 }
