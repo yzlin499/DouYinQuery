@@ -4,6 +4,12 @@ import java.util.Date;
 
 public class PrintInfo implements DouYinFunction {
     private ConfigLoading configLoading=ConfigLoading.getInstance();
+
+    public PrintInfo() {
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+    }
+
     @Override
     public void apply(DouYinInfo douYinInfo) {
         System.out.println("成员:"+douYinInfo.getMemberName()+"\t\t"+

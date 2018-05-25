@@ -7,9 +7,7 @@ import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.List;
 
@@ -18,10 +16,13 @@ public class DouYin {
         try {
             ScriptEngineManager manager = new ScriptEngineManager();
             ScriptEngine engine = manager.getEngineByName("javascript");
-            FileReader reader = new FileReader(new File(DouYin.class.getResource("fuckSign.js").toURI()));
+            File f=new File(DouYin.class.getResource("fuckSign.js").toURI());
+            InputStream is=new FileInputStream(f);
+            Reader reader = new InputStreamReader(is,"UTF-8");
             engine.eval(reader);
             signInvoke = (Invocable) engine;
             reader.close();
+            is.close();
         } catch (URISyntaxException | IOException | ScriptException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package top.yzlin.douyinquery;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.function.Function;
 
 public class VideoDownLand implements DouYinFunction {
@@ -31,7 +32,8 @@ public class VideoDownLand implements DouYinFunction {
         if(isOpen) {
             try {
                 String name=nameFormat.replace("[name]",douYinInfo.getMemberName())
-                        .replace("[title]",douYinInfo.getTitle());
+                        .replace("[title]",douYinInfo.getTitle())
+                        .replace("[time]",configLoading.getDateFormat().format(new Date(douYinInfo.getCreateTime())));
                 runtime.exec(String.format(runSentence, douYinInfo.getVideoUrl(), name));
             } catch (IOException e) {
                 e.printStackTrace();

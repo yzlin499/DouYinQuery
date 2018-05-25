@@ -38,7 +38,9 @@ public class Start {
         }
         long date2=date;//内部类的final生成的临时变量
         DouYinInfo[] douYinInfos=configLoading.getMemberSet().parallelStream()
-                .flatMap(s-> Stream.of(new DouYin(s).getData(date2)))
+                .flatMap(s-> {
+                    return Stream.of(new DouYin(s).getData(date2));
+                })
                 .toArray(DouYinInfo[]::new);
         for(DouYinFunction d:configLoading.getFunctions()){
             for(DouYinInfo i:douYinInfos){
