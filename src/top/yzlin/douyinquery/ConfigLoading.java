@@ -24,8 +24,6 @@ public class ConfigLoading {
     private Properties memberProperties;
 
     private SimpleDateFormat simpleDateFormat;
-    private String ffmpegPath;
-    private String ffmpegSentence;
 
     private ConfigLoading(){
         configProperties=new Properties();
@@ -48,17 +46,14 @@ public class ConfigLoading {
 
     private void init(){
         simpleDateFormat=new SimpleDateFormat(configProperties.getProperty("dateFormat"));
-        ffmpegPath=configProperties.getProperty("ffmpegPath","");
-        ffmpegSentence=configProperties.getProperty("ffmpegSentence",
-                "ffmpeg -i \"%s\"  -acodec copy -vcodec copy -f mp4 \"%s.mp4\"");
     }
 
-    public String getFfmpegPath(){
-        return ffmpegPath;
+    public String getConfigProperties(String key){
+        return configProperties.getProperty(key);
     }
 
-    public String getFfmpegSentence(){
-        return ffmpegSentence;
+    public String getConfigProperties(String key,String defaultValue){
+        return configProperties.getProperty(key,defaultValue);
     }
 
     public DouYinFunction[] getFunctions(){
