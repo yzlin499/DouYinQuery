@@ -1,16 +1,8 @@
 package top.yzlin;
 
 import top.yzlin.douyinquery.*;
-import top.yzlin.tools.Tools;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Properties;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -38,9 +30,7 @@ public class Start {
         }
         long date2=date;//内部类的final生成的临时变量
         DouYinInfo[] douYinInfos=configLoading.getMemberSet().parallelStream()
-                .flatMap(s-> {
-                    return Stream.of(new DouYin(s).getData(date2));
-                })
+                .flatMap(s-> Stream.of(new DouYin(s).getData(date2)))
                 .toArray(DouYinInfo[]::new);
         for(DouYinFunction d:configLoading.getFunctions()){
             for(DouYinInfo i:douYinInfos){

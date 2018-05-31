@@ -3,7 +3,6 @@ package top.yzlin.douyinquery;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.function.Function;
 
 public class VideoDownLand implements DouYinFunction {
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
