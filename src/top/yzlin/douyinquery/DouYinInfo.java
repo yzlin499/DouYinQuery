@@ -1,10 +1,28 @@
 package top.yzlin.douyinquery;
 
+/**
+ * 抖音信息的javaBean
+ */
 public class DouYinInfo {
+    /**
+     * 成员姓名
+     */
     private String memberName;
+    /**
+     * 创建时间
+     */
     private long createTime;
+    /**
+     * 标题
+     */
     private String title;
+    /**
+     * 视频地址
+     */
     private String videoUrl;
+    /**
+     * 封面地址
+     */
     private String coverUrl;
 
     public String getMemberName() {

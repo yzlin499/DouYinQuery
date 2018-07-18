@@ -6,6 +6,9 @@ import java.text.SimpleDateFormat;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
+/**
+ * 程序启动入口
+ */
 public class Start {
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
     private static final SimpleDateFormat dateFormat=configLoading.getDateFormat();
@@ -28,10 +31,14 @@ public class Start {
                 time=a.nextLine();
             }
         }
-        long date2=date;//内部类的final生成的临时变量
+        long date2=date;//内部类的final生成的临时变量，愚蠢
+
+        //并发获取到所有的成员最新抖音
         DouYinInfo[] douYinInfos=configLoading.getMemberSet().parallelStream()
                 .flatMap(s-> Stream.of(new DouYin(s).getData(date2)))
                 .toArray(DouYinInfo[]::new);
+
+        //过一遍插件
         for(DouYinFunction d:configLoading.getFunctions()){
             for(DouYinInfo i:douYinInfos){
                 d.apply(i);

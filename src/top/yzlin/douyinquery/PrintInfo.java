@@ -2,6 +2,9 @@ package top.yzlin.douyinquery;
 
 import java.util.Date;
 
+/**
+ * 输出信息插件
+ */
 public class PrintInfo implements DouYinFunction {
     private ConfigLoading configLoading=ConfigLoading.getInstance();
 

@@ -4,6 +4,9 @@ import java.io.*;
 import java.net.URL;
 import java.util.Date;
 
+/**
+ * 图片下载插件
+ */
 public class ImgDownLand implements DouYinFunction{
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
     private String nameFormat;

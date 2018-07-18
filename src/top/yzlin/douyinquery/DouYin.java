@@ -11,9 +11,15 @@ import java.io.*;
 import java.net.URISyntaxException;
 import java.util.List;
 
+/**
+ * 该软件的使用方法
+ * 由这个类来进行获取某个时间点之后的所有成员的最新抖音
+ * 然后
+ */
 public class DouYin {
     static {
         try {
+            //将算法文件给加载进来，因为我实在是看不懂这个js在干嘛
             ScriptEngineManager manager = new ScriptEngineManager();
             ScriptEngine engine = manager.getEngineByName("javascript");
             File f=new File(DouYin.class.getResource("fuckSign.js").toURI());
@@ -29,15 +35,24 @@ public class DouYin {
     }
 
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
-    private static Invocable signInvoke;
-    private String userID;
-    private String memberName;
+    private static Invocable signInvoke;//算法函数
+    private String userID;//成员的ID
+    private String memberName;//成员的姓名
 
+    /**
+     * 成员名字，按照名字来进行查找成员ID
+     * @param memberName 成员名字
+     */
     public DouYin(String memberName){
         this.memberName=memberName;
         userID=configLoading.getMemberUserID(memberName);
     }
 
+    /**
+     * 某个时间之后的成员抖音发布情况
+     * @param lastTime 时间戳
+     * @return 抖音信息实例
+     */
     public DouYinInfo[] getData(long lastTime){
         String str=Tools.sendGet("https://www.douyin.com/aweme/v1/aweme/post/",
                 "user_id="+userID+"&count=21&max_cursor=0&aid=1128&_signature="+getSign(userID));
@@ -56,6 +71,11 @@ public class DouYin {
                 .toArray(DouYinInfo[]::new);
     }
 
+    /**
+     * 封装一下算法
+     * @param userID 成员的userID
+     * @return 签名
+     */
     private static String getSign(String userID){
         try {
             return signInvoke.invokeFunction("generateSignature", userID).toString();

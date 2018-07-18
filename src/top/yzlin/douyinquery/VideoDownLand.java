@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
+/**
+ * 视频下载插件
+ */
 public class VideoDownLand implements DouYinFunction {
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
     private String runSentence;
