@@ -34,7 +34,7 @@ public class Start {
         long date2=date;//内部类的final生成的临时变量，愚蠢
 
         //并发获取到所有的成员最新抖音
-        DouYinInfo[] douYinInfos=configLoading.getMemberSet().parallelStream()
+        DouYinInfo[] douYinInfos = configLoading.getMemberList().parallelStream()
                 .flatMap(s-> Stream.of(new DouYin(s).getData(date2)))
                 .toArray(DouYinInfo[]::new);
 

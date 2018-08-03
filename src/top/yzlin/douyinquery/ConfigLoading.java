@@ -8,9 +8,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -119,10 +120,30 @@ public class ConfigLoading {
     }
 
     /**
+     * 获取成员的dytk
+     *
+     * @param memberName 姓名
+     * @return userID
+     */
+    public String getMemberDytk(String memberName) {
+        return memberProperties.getProperty(memberName + ".dytk",
+                getMemberDytkFormWeb(getMemberUserID(memberName)));
+    }
+
+    private String getMemberDytkFormWeb(String userID) {
+        String str = Tools.sendGet("https://www.amemv.com/share/user/" + userID, "");
+        int index = str.indexOf("dytk");
+        index = str.indexOf('\'', index) + 1;
+        return str.substring(index, str.indexOf('\'', index));
+    }
+
+    /**
      * 获得成员的姓名集合
      * @return 成员姓名集合
      */
-    public Set<String> getMemberSet(){
-        return memberProperties.stringPropertyNames();
+    public List<String> getMemberList() {
+        return memberProperties.stringPropertyNames().stream()
+                .filter(s -> !s.endsWith(".dytk"))
+                .collect(Collectors.toList());
     }
 }

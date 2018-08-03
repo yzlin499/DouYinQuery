@@ -1,5 +1,6 @@
 package top.yzlin.tools;
-import net.sf.json.JSONObject;
+
+import com.alibaba.fastjson.JSONObject;
 import top.yzlin.netInterface.IOExceptionSolution;
 import top.yzlin.netInterface.SetConnection;
 
@@ -83,11 +84,11 @@ public class Tools {
         }
         try (BufferedReader in= new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf8"))){
             String line;
-            String result="";
+            StringBuilder result = new StringBuilder();
             while ((line = in.readLine()) != null) {
-                result += line;
+                result.append(line);
             }
-            return result;
+            return result.toString();
         } catch (IOException e ) {
             Tools.print("get的读写区炸了，10秒之后重新获取");
             Tools.sleep(10000);
@@ -202,7 +203,7 @@ public class Tools {
         if(temp==null){
             return null;
         }
-        JSONObject t=JSONObject.fromObject(temp.substring(1,temp.length()-1));
+        JSONObject t = JSONObject.parseObject(temp.substring(1, temp.length() - 1));
         return t.getString("url_short");
     }
 

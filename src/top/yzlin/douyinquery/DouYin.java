@@ -1,14 +1,8 @@
 package top.yzlin.douyinquery;
 
-import net.sf.json.JSONObject;
+import com.alibaba.fastjson.JSONObject;
 import top.yzlin.tools.Tools;
 
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.*;
-import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -17,27 +11,11 @@ import java.util.List;
  * 然后
  */
 public class DouYin {
-    static {
-        try {
-            //将算法文件给加载进来，因为我实在是看不懂这个js在干嘛
-            ScriptEngineManager manager = new ScriptEngineManager();
-            ScriptEngine engine = manager.getEngineByName("javascript");
-            File f=new File(DouYin.class.getResource("fuckSign.js").toURI());
-            InputStream is=new FileInputStream(f);
-            Reader reader = new InputStreamReader(is,"UTF-8");
-            engine.eval(reader);
-            signInvoke = (Invocable) engine;
-            reader.close();
-            is.close();
-        } catch (URISyntaxException | IOException | ScriptException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
-    private static Invocable signInvoke;//算法函数
+    private static GetSignFunction getSignFunction = new OldSignFunction();
     private String userID;//成员的ID
     private String memberName;//成员的姓名
+    private String memberDytk;
 
     /**
      * 成员名字，按照名字来进行查找成员ID
@@ -46,6 +24,7 @@ public class DouYin {
     public DouYin(String memberName){
         this.memberName=memberName;
         userID=configLoading.getMemberUserID(memberName);
+        memberDytk = configLoading.getMemberDytk(memberName);
     }
 
     /**
@@ -54,14 +33,20 @@ public class DouYin {
      * @return 抖音信息实例
      */
     public DouYinInfo[] getData(long lastTime){
-        String str=Tools.sendGet("https://www.douyin.com/aweme/v1/aweme/post/",
-                "user_id="+userID+"&count=21&max_cursor=0&aid=1128&_signature="+getSign(userID));
-        List<JSONObject> jsonObjectList=JSONObject.fromObject(str).getJSONArray("aweme_list");
+        String str = Tools.sendGet("https://www.amemv.com/aweme/v1/aweme/post/",
+                "user_id=" + userID + "&count=21&max_cursor=0&aid=1128&_signature=" + getSign(userID) + "&dytk=" + memberDytk,
+                conn -> {
+                    conn.setRequestProperty("accept", "application/json");
+                    conn.setRequestProperty("accept-language", "zh-CN,zh;q=0.9");
+                    conn.setRequestProperty("user-agent", "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1");
+                });
+        List<Object> jsonObjectList = JSONObject.parseObject(str).getJSONArray("aweme_list");
         return jsonObjectList.stream()
-                .map(j->{
+                .map(data -> {
+                    JSONObject j = (JSONObject) data;
                     DouYinInfo douYinInfo=new DouYinInfo();
                     douYinInfo.setMemberName(memberName);
-                    douYinInfo.setTitle(j.getString("desc"));
+                    douYinInfo.setTitle(j.getString("share_desc"));
                     douYinInfo.setCreateTime(j.getLong("create_time")*1000);
                     j=j.getJSONObject("video");
                     douYinInfo.setCoverUrl(j.getJSONObject("cover").getJSONArray("url_list").getString(0));
@@ -77,11 +62,6 @@ public class DouYin {
      * @return 签名
      */
     private static String getSign(String userID){
-        try {
-            return signInvoke.invokeFunction("generateSignature", userID).toString();
-        } catch (ScriptException | NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-        return "";
+        return getSignFunction.getSign(userID);
     }
 }
