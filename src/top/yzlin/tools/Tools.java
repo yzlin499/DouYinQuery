@@ -4,6 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import top.yzlin.netInterface.IOExceptionSolution;
 import top.yzlin.netInterface.SetConnection;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -19,6 +22,7 @@ import java.util.TimeZone;
 
 
 public class Tools {
+    private static final Clipboard SYSC = Toolkit.getDefaultToolkit().getSystemClipboard();
     private static final SimpleDateFormat df = new SimpleDateFormat("[MM-dd HH:mm:ss] ");
     private static MessageDigest md;
     static{
@@ -33,6 +37,14 @@ public class Tools {
         }
     }
 
+    /**
+     * 往剪切板写文本
+     *
+     * @param writeMe 写入文本
+     */
+    public static void setClipboardText(String writeMe) {
+        SYSC.setContents(new StringSelection(writeMe), null);
+    }
 
     /**
      * 将Unicode转换
@@ -203,7 +215,7 @@ public class Tools {
         if(temp==null){
             return null;
         }
-        JSONObject t = JSONObject.parseObject(temp.substring(1, temp.length() - 1));
+        JSONObject t = JSONObject.parseObject(temp.substring(1, temp.length() -1));
         return t.getString("url_short");
     }
 

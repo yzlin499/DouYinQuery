@@ -5,5 +5,7 @@ package top.yzlin.douyinquery;
  *
  */
 public interface DouYinFunction {
+    String expandName();
+    
     void apply(DouYinInfo douYinInfo);
 }

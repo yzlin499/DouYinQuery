@@ -5,6 +5,10 @@ package top.yzlin.douyinquery;
  */
 public class DouYinInfo {
     /**
+     * 抖音ID
+     */
+    private long douyinID;
+    /**
      * 成员姓名
      */
     private String memberName;
@@ -25,6 +29,16 @@ public class DouYinInfo {
      */
     private String coverUrl;
 
+    public long getDouyinID() {
+        return douyinID;
+    }
+
+    public void setDouyinID(long douyinID) {
+        this.douyinID = douyinID;
+    }
+
+    
+    
     public String getMemberName() {
         return memberName;
     }
@@ -67,12 +81,8 @@ public class DouYinInfo {
 
     @Override
     public String toString() {
-        return "DouYinInfo{" +
-                "memberName='" + memberName + '\'' +
-                ", createTime=" + createTime +
-                ", title='" + title + '\'' +
-                ", videoUrl='" + videoUrl + '\'' +
-                ", coverUrl='" + coverUrl + '\'' +
-                '}';
+        return "DouYinInfo{" + "douyinID=" + douyinID + ", memberName=" + memberName + ", title=" + title + ", videoUrl=" + videoUrl + ", coverUrl=" + coverUrl + '}';
     }
+
+
 }

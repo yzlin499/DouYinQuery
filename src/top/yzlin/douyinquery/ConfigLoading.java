@@ -28,7 +28,7 @@ public class ConfigLoading {
 
     private Properties configProperties;//配置文件
     private Properties memberProperties;//成员名单
-
+    private File configPackage;
     private SimpleDateFormat simpleDateFormat;
 
     private ConfigLoading(){
@@ -36,13 +36,14 @@ public class ConfigLoading {
         memberProperties=new Properties();
         try {
             //加载进来两个配置文件
-            File configPackage=new File(Start.class.getResource("../../config/").toURI());
-            File memberList= new File(configPackage,"memberList.properties");
-            File config = new File(configPackage,"config.properties");
-            FileReader f=new FileReader(config);
+            configPackage = new File(Start.class.getResource("../../config/").toURI());
+            FileReader f;
+
+            f = new FileReader(configFile("config.properties"));
             configProperties.load(f);
             f.close();
-            f=new FileReader(memberList);
+
+            f = new FileReader(configFile("memberList.properties"));
             memberProperties.load(f);
             f.close();
         } catch (URISyntaxException | IOException e) {
@@ -145,5 +146,15 @@ public class ConfigLoading {
         return memberProperties.stringPropertyNames().stream()
                 .filter(s -> !s.endsWith(".dytk"))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 获得config底下的文件
+     *
+     * @param filePath
+     * @return
+     */
+    public File configFile(String filePath) {
+        return new File(configPackage, filePath);
     }
 }

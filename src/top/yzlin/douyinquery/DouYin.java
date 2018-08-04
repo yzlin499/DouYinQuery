@@ -11,12 +11,13 @@ import java.util.List;
  * 然后
  */
 public class DouYin {
+    private static final DataLoad dataLoad = DataLoad.getInstance();
     private static final ConfigLoading configLoading=ConfigLoading.getInstance();
     private static GetSignFunction getSignFunction = new OldSignFunction();
     private String userID;//成员的ID
     private String memberName;//成员的姓名
     private String memberDytk;
-
+    private long sign;
     /**
      * 成员名字，按照名字来进行查找成员ID
      * @param memberName 成员名字
@@ -25,14 +26,14 @@ public class DouYin {
         this.memberName=memberName;
         userID=configLoading.getMemberUserID(memberName);
         memberDytk = configLoading.getMemberDytk(memberName);
+        sign = dataLoad.getSignID(memberName);
     }
 
     /**
      * 某个时间之后的成员抖音发布情况
-     * @param lastTime 时间戳
      * @return 抖音信息实例
      */
-    public DouYinInfo[] getData(long lastTime){
+    public DouYinInfo[] getData() {
         String str = Tools.sendGet("https://www.amemv.com/aweme/v1/aweme/post/",
                 "user_id=" + userID + "&count=21&max_cursor=0&aid=1128&_signature=" + getSign(userID) + "&dytk=" + memberDytk,
                 conn -> {
@@ -42,18 +43,18 @@ public class DouYin {
                 });
         List<Object> jsonObjectList = JSONObject.parseObject(str).getJSONArray("aweme_list");
         return jsonObjectList.stream()
+                .filter(data -> ((JSONObject) data).getLongValue("aweme_id") > sign)
                 .map(data -> {
                     JSONObject j = (JSONObject) data;
                     DouYinInfo douYinInfo=new DouYinInfo();
+                    douYinInfo.setDouyinID(j.getLongValue("aweme_id"));
                     douYinInfo.setMemberName(memberName);
-                    douYinInfo.setTitle(j.getString("share_desc"));
-                    douYinInfo.setCreateTime(j.getLong("create_time")*1000);
+                    douYinInfo.setTitle(j.getJSONObject("share_info").getString("share_desc"));
                     j=j.getJSONObject("video");
                     douYinInfo.setCoverUrl(j.getJSONObject("cover").getJSONArray("url_list").getString(0));
                     douYinInfo.setVideoUrl(j.getJSONObject("play_addr").getJSONArray("url_list").getString(0));
                     return douYinInfo;
-                }).filter(d->d.getCreateTime()>=lastTime)
-                .toArray(DouYinInfo[]::new);
+                }).toArray(DouYinInfo[]::new);
     }
 
     /**

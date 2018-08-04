@@ -1,8 +1,11 @@
 package top.yzlin.douyinquery;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * 视频下载插件
@@ -15,37 +18,50 @@ public class VideoDownLand implements DouYinFunction {
     private String nameFormat;
 
     public VideoDownLand(){
-        String ffmpegPath=configLoading.getConfigProperties("ffmpegPath","");
-        if("FFMPEG".equals(ffmpegPath.toUpperCase())){
-            isOpen=true;
-        }else{
-            isOpen=new File(ffmpegPath).exists();
-            if(!isOpen){
-                return;
-            }
-        }
-        String ffmpegSentence=configLoading.getConfigProperties("ffmpegSentence",
-                "-i \"%s\"  -acodec copy -vcodec copy -f mp4 \"%s.mp4\"");
-        runSentence="\""+ffmpegPath+"\" "+ffmpegSentence;
+        runSentence = configLoading.getConfigProperties("ffmpegPath", "");
+        isOpen = (!"".equals(runSentence)) && new File(runSentence).exists();
         nameFormat=configLoading.getConfigProperties("videoFileName","[name]-[title]");
     }
+
+    @Override
+    public String expandName() {
+        return isOpen ? "下载视频" : null;
+    }
+    
     @Override
     public void apply(DouYinInfo douYinInfo) {
         if(isOpen) {
-            try {
-                String name=nameFormat.replace("[name]",douYinInfo.getMemberName())
-                        .replace("[title]",douYinInfo.getTitle())
-                        .replace("[time]",configLoading.getDateFormat().format(new Date(douYinInfo.getCreateTime())));
-                runtime.exec(String.format(runSentence, douYinInfo.getVideoUrl(), name));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            JFileChooser jFileChooser1 = new JFileChooser() {
+                @Override
+                public void approveSelection() {
+                    String path = this.getSelectedFile().getAbsolutePath() + ".mp4";
+                    new Thread(() -> {
+                        try {
+                            String[] code = {
+                                    runSentence,
+                                    "-i",
+                                    douYinInfo.getVideoUrl(),
+                                    "-acodec", "copy", "-vcodec", "copy", "-f", "mp4",
+                                    path
+                            };
+                            ProcessBuilder pb = new ProcessBuilder(code);
+                            pb.redirectErrorStream(true);
+                            InputStream is = pb.start().getInputStream();
+                            while (is.read() != -1) ;
+                        } catch (IOException ex) {
+                            Logger.getLogger(WatchVideo.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }).start();
+                    cancelSelection();
+                }
+            };
+            jFileChooser1.setDialogType(JFileChooser.SAVE_DIALOG);
+            jFileChooser1.setApproveButtonText("保存");
+            jFileChooser1.setSelectedFile(new File(nameFormat.replace("[name]", douYinInfo.getMemberName())
+                    .replace("[title]", douYinInfo.getTitle())));
+            jFileChooser1.showDialog(new JLabel(), "下载视频");
         }else{
             System.out.println("插件启动失败");
         }
     }
-
-
-
-
 }
